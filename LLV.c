@@ -246,8 +246,6 @@ int menu_listar(App StoreED[MAX], App app[MAX], App RunED[MAX], Abr abr[MAX], in
 char aplicativo[50];
 int c,existir,d;
 system("cls");
-printf("%d\n", meus->il);
-printf("%d\n", meus->fl);
 printf("%s\n", mensagem);
 if(x==1){
 printf("--------StoreED-------\n");
