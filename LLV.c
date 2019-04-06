@@ -17,36 +17,50 @@ typedef struct{
 	char nome[4];
 	char original[50];
 }Abr;
-int remover(App app[MAX], Abr abr[MAX],char nome[50]){
-	int x,c,y,t,z;			
+int remover(App app[MAX], Abr abr[MAX],char nome[50],Lista *proxima){
+	int x,t,z;			
 		for(z=0;z<strlen(nome);z++){
 		nome[z]=tolower(nome[z]);}
-	for(x=0;x<MAX;x++){
-		if(strcmp(abr[x].nome, nome)==0){
-			for(t=0;t<MAX;t++){
-			if(strcmp(abr[x].original,app[t].nome)==0){	
-			for(c=0;c+t<MAX;c++){
-				app[c+t]=app[c+t+1];}
-			if(app[MAX-1].tamanho == -1){
-					for(y=0;y<MAX;y++){
-						if(app[y+1].tamanho == -1){
-							app[y].tamanho = -1;
-						}
+	for(z=0;z<MAX;z++){
+		if(strcmp(abr[z].nome, nome)==0){	
+			for(x=proxima->il;x<=proxima->fl;x++){
+				if(strcmp(abr[z].original, app[x].nome)==0){
+					if(x==proxima->il){
+						proxima->il = (proxima->il)+1;
+						return 1;
 					}
-				}else{app[MAX-1].tamanho = -1;}
-			return 1;}}}else if(strcmp(nome,app[x].nome)==0)
-		{
-			for(c=0;c+x<MAX;c++){
-				app[c+x]=app[c+x+1];}
-				for(y=0;y<MAX;y++){
-				if(app[y+1].tamanho == -1){
-				app[y].tamanho = -1;
-						}
+					if(x==proxima->fl){
+						proxima->fl=(proxima->fl)-1;
+						return 1;
 					}
-				return 1;}
+					for(t=x; t<proxima->fl;t++){
+						app[x]=app[x+1];
+					}
+					proxima->fl = (proxima->fl)-1;
+					return 1;
+				}
+			}
 		}
-		return 0;
 	}
+	for(x=proxima->il;x<=proxima->fl;x++){
+		if(strcmp(app[x].nome, nome)==0){
+			if(x==proxima->il){
+				proxima->il = (proxima->il)+1;
+				return 1;
+			}
+			if(x==proxima->fl){
+				proxima->fl=(proxima->fl)-1;
+				return 1;
+			}
+			for(t=x; t<proxima->fl;t++){
+				app[x]=app[x+1];
+			}
+				proxima->fl = (proxima->fl)-1;
+				return 1;
+		}
+	}
+	return 0;
+}
 void ler_banco(App app[MAX],Lista *store){
 	int x,y,c,z;
 	App temp;
@@ -144,49 +158,48 @@ void inserir(App app[MAX], Abr abr[MAX], char nome[50], App next[MAX],char mensa
 			}
 		}
 		
-		for(x=0;x<MAX;x++){
-			if(strcmp(abr[x].nome, nome)==0)
-				for(y=anterior->il;y<=anterior->fl;y++){
-					if(strcmp(app[y].nome, abr[x].original)==0)
-						for (z = proxima->il; z<=proxima->fl;z++){
-							if(proxima->il == -2 ){
-								proxima->il = 0;
-								z=0;
-							}
-							if(y==proxima->il && proxima->il!=0){
-								proxima->il=(proxima->il) -1;
-								z=z-1;
-			  	  	  	  	  }	
-							if(app[y].tamanho < next[z].tamanho || proxima->fl==-1)
-							{ 	
-								if(y!=proxima->il){
-									for(c=proxima->fl;c>z;c--){
-										next[c] = next[c-1];
-									}
-								}else if(app[y].tamanho>next[proxima->fl].tamanho)
-								{
-								if((proxima->fl)!=MAX-1){
-									next[(proxima->fl)+1] = app[z];
-									proxima->fl=(proxima->fl)+1;
-									strcpy(mensagem, "sucesso");
-									mensagem[sizeof("sucesso")]='\0';
-										return;	
-									} else {								
-										strcpy(mensagem, "a lista está cheia");
-										mensagem[sizeof("a lista está cheia")]='\0';
-										return;
-										}
-									
-								}
-								next[y] = app[z];
-								proxima->fl=(proxima->fl)+1;
-								strcpy(mensagem, "sucesso");
-								mensagem[sizeof("sucesso")]='\0';
-										return;
+		for(z=0;z<MAX;z++){
+			if(strcmp(abr[z].nome, nome)==0)
+			for(x=anterior->il;x<=anterior->fl;x++){
+				if(strcmp(app[x].nome, abr[z].original)==0){
+					for(y=(proxima->il);y<=(proxima->fl);y++){
+						if(proxima->il == -2 ){
+							proxima->il = 0;
+							y=0;
 						}
+						if(app[x].tamanho < next[y].tamanho || proxima->fl == -1){
+							if(proxima->il!=0){
+								proxima->il =(proxima->il)-1;
+								for(c=proxima->il;c<y;c++){
+									next[c]=next[c+1];
+								}
+								next[y]=app[x];
+								break;
+							}
+							if(proxima->fl!=MAX-1){
+								proxima->fl =(proxima->fl)+1;
+								for(c=proxima->fl;c>y;c--){
+									next[c]=next[c-1];
+								}
+								next[y]=app[x];
+								break;
+							}
+						}
+						if(app[x].tamanho>=next[proxima->fl].tamanho){
+							proxima->fl=(proxima->fl)+1;
+							next[proxima->fl]=app[x];
+							break;
+						
+						}
+					
 					}
-				}	
+					strcpy(mensagem, "sucesso");
+					mensagem[sizeof("sucesso")]='\0';
+					return;
+				}
+			}
 		}
+		
 			for(x=anterior->il;x<=anterior->fl;x++){
 				if(strcmp(app[x].nome, nome)==0){
 					for(y=(proxima->il);y<=(proxima->fl);y++){
@@ -194,34 +207,37 @@ void inserir(App app[MAX], Abr abr[MAX], char nome[50], App next[MAX],char mensa
 							proxima->il = 0;
 							y=0;
 						}
-						if(app[x].tamanho < next[y].tamanho || proxima->fl == -1){ 
-							if(y==proxima->il && proxima->il!=0){
-								proxima->il=(proxima->il) -1;
-								y=y-1;
-								}else{proxima->fl=(proxima->fl)+1;}
-								if(y!=proxima->il || proxima->il==proxima->fl){
-									for(c=proxima->fl;c>=proxima->il;c--){
-										next[c] = next[c-1];
-										}
+						if(app[x].tamanho < next[y].tamanho || proxima->fl == -1){
+							if(proxima->il!=0){
+								proxima->il =(proxima->il)-1;
+								for(c=proxima->il;c<y;c++){
+									next[c]=next[c+1];
 								}
-								if(proxima->il==proxima->fl){}
-								strcpy(mensagem, "sucesso");
-								mensagem[sizeof("sucesso")]='\0';
-								return;
+								next[y]=app[x];
+								break;
 							}
-						if((proxima->fl)!=(MAX-1) && next[proxima->fl].tamanho<app[x].tamanho){
-							for(c=proxima->fl;c>=proxima->il;c--){
-									next[c] = next[c-1];
-									}
+							if(proxima->fl!=MAX-1){
+								proxima->fl =(proxima->fl)+1;
+								for(c=proxima->fl;c>y;c--){
+									next[c]=next[c-1];
+								}
+								next[y]=app[x];
+								break;
+							}
+						}
+						if(app[x].tamanho>=next[proxima->fl].tamanho){
 							proxima->fl=(proxima->fl)+1;
-							next[proxima->fl] = app[x];
-							strcpy(mensagem, "sucesso");
-							mensagem[sizeof("sucesso")]='\0';
-							return;
+							next[proxima->fl]=app[x];
+							break;
+						
 						}
 					}
+					strcpy(mensagem, "sucesso");
+					mensagem[sizeof("sucesso")]='\0';
+					return;
 				}
 			}
+			
 		strcpy(mensagem, "O aplicativo nao existe");
 		mensagem[sizeof("o aplicativo nao existe")]='\0';
 		return;
@@ -255,13 +271,13 @@ case 1:
 if(existir==1){
 	printf("Qual aplicativo voce deseja remover?");
 	scanf("%s", aplicativo);
-	d = remover(StoreED, abr, aplicativo);
+	d = remover(StoreED, abr, aplicativo, store);
 	if(d==0){strcpy(mensagem, "O aplicativo nao existe");
 		mensagem[sizeof("o aplicativo nao existe")]='\0';}
 	else if(d==1){strcpy(mensagem, "O aplicativo foi removido com sucesso");
 		mensagem[sizeof("o aplicativo doi removido com sucesso")]='\0';}
-	remover(app, abr,aplicativo);
-	remover(RunED,abr,aplicativo);
+	remover(app, abr,aplicativo,meus);
+	remover(RunED,abr,aplicativo,rum);
 	return 1;}
 	break;
 case 3:
@@ -298,12 +314,12 @@ case 1:
 	if(existir==1){
 	printf("Qual aplicativo voce deseja desinstalar?");
 	scanf("%s", aplicativo);
-	d = remover(app, abr, aplicativo);
+	d = remover(app, abr, aplicativo,meus);
 		if(d==0){strcpy(mensagem, "O aplicativo nao existe");
 		mensagem[sizeof("o aplicativo nao existe")]='\0';}
 	else if(d==1){strcpy(mensagem, "O aplicativo foi removido com sucesso");
 		mensagem[sizeof("o aplicativo doi removido com sucesso")]='\0';}
-	remover(RunED,abr,aplicativo);
+	remover(RunED,abr,aplicativo,rum);
 	return 2;}
 	break;
 case 2:
@@ -333,7 +349,7 @@ case 1:
 	if(existir==1){
 	printf("Qual aplicativo voce deseja parar?");
 	scanf("%s", aplicativo);
-	d = remover(RunED, abr, aplicativo);
+	d = remover(RunED, abr, aplicativo,rum);
 		if(d==0){strcpy(mensagem, "O aplicativo nao existe");
 		mensagem[sizeof("o aplicativo nao existe")]='\0';}
 	else if(d==1){strcpy(mensagem, "O aplicativo foi removido com sucesso");
