@@ -1,0 +1,448 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 15
+
+typedef struct{
+	char nome[50];
+	int tamanho;
+}aplicativo;
+typedef struct{
+	char nome[4];
+	char original[50];
+}Abr;
+typedef struct{
+	aplicativo app;
+	int prox;
+}Lista;
+typedef struct{
+	Lista apps[MAX];
+	int IA;
+}all;
+
+void ins(all *app, int *disp,aplicativo proximo,int x){
+	int temp;
+	if(app->AI!=-2){
+		
+	}
+	
+	app->apps[*disp].app = proximo;
+	temp = *disp;
+	*disp = app->apps[*disp].prox;
+	if(x!=-2){
+	app->apps[*disp].prox = app->apps[x].prox;
+	app->apps[x].prox = *disp;
+	}
+}
+void rem(all *app, int *disp, int atual){
+	int temp;
+	int anterior;
+	temp = *disp;
+	if(atual!=app->IA){
+	for(int x = app->apps[app->IA].prox, app[x].prox!=atual, x=app->apps[x].prox){}
+	anterior=x;
+	*disp = app->apps[anterior].prox;
+	app->apps[anterior].prox = app->apps[atual].prox
+	app.apps[atual].prox = temp;
+}else
+{
+	*disp = atual;
+	if(app->apps[atual].prox ==-2){
+		app.IA=-2;
+	}else{
+		app.IA=app->apps[atual].prox;
+	}
+	app.apps[atual].prox=temp;
+}}
+
+
+int remover(App app[MAX], Abr abr[MAX],char nome[50],Lista *proxima){
+	int x,t,z;			
+		for(z=0;z<strlen(nome);z++){
+		nome[z]=tolower(nome[z]);}
+	for(z=0;z<MAX;z++){
+		if(strcmp(abr[z].nome, nome)==0){	
+			for(x=proxima->il;x<=proxima->fl;x++){
+				if(strcmp(abr[z].original, app[x].nome)==0){
+					if(x==proxima->il){
+						proxima->il = (proxima->il)+1;
+						return 1;
+					}
+					if(x==proxima->fl){
+						proxima->fl=(proxima->fl)-1;
+						return 1;
+					}
+					for(t=x; t<proxima->fl;t++){
+						app[x]=app[x+1];
+					}
+					proxima->fl = (proxima->fl)-1;
+					return 1;
+				}
+			}
+		}
+	}
+	for(x=proxima->il;x<=proxima->fl;x++){
+		if(strcmp(app[x].nome, nome)==0){
+			if(x==proxima->il){
+				proxima->il = (proxima->il)+1;
+				return 1;
+			}
+			if(x==proxima->fl){
+				proxima->fl=(proxima->fl)-1;
+				return 1;
+			}
+			for(t=x; t<proxima->fl;t++){
+				app[x]=app[x+1];
+			}
+				proxima->fl = (proxima->fl)-1;
+				return 1;
+		}
+	}
+	return 0;
+}
+void ler_banco(Lista app[MAX],int disp[3]){
+	int x,y,c,z;
+	App temp;
+	FILE *dados;
+	char banco[30];
+	store->fl=0;
+	store->il=0;
+	do{do{do{printf("insira o nome do banco de dados:");
+	scanf("%s", banco);
+	system("cls");
+	dados = fopen(banco, "rb");
+	if(dados == NULL){printf("Nao existe este arquivo de dados\n");}}while(dados==NULL);
+	for(x=0;x<MAX;x++){
+		fread(&temp, sizeof(App),1, dados);
+		for(z=0;z<strlen(temp.nome);z++){
+		temp.nome[z]=tolower(temp.nome[z]);}
+		for(y=0;y<MAX;y++){
+			if(temp.tamanho < app[y].aplicativo.tamanho ||  disp ==0)
+			{ 	
+			for(c=MAX-1;c>y;c--){
+					app[c] = app[c-1];
+				}
+				app[y] = temp;
+				break;
+			}
+		}
+	}
+	fread(&temp, sizeof(App), 1,dados);
+	if(!feof(dados)){printf("ocorreu um erro na leitura\n");}
+	}while(!feof(dados));
+	y=0;
+	for(x=0;x<MAX;x++){
+	if((app[x]).tamanho < 0){printf("O arquivo esta conrrompido com aplicativos de tamanho impossiveis\n por favor inserir novo arquivo\n"); y=1;}}
+	}while(y==1);
+	fclose(dados);
+}
+int listar(App app[MAX], Abr abr[MAX], int tamanho, Lista *store){
+	int x,y,w=0,d[3],c=0;
+	for(x=0;x<MAX;x++){
+		abr[x].nome[0]='\0';
+	}
+	for(x=store->il; x<=store->fl; x++){
+		if((app[x]).tamanho != -1){
+			for(y=0; y<MAX;y++){
+			d[0] = 0; d[1] = 1; d[2] =2;
+				if(x!=y){	
+					if((app[x]).tamanho>(app[y]).tamanho){
+						while((app[x]).nome[d[0]] == (app[y]).nome[0] && (app[x]).nome[d[1]] == (app[y]).nome[0] && (app[x]).nome[d[2]] == (app[y]).nome[0])
+						{
+						d[2]++;
+						}
+					}			
+			}				
+		}
+		strncpy((abr[x]).nome, app[x].nome, 3);
+		strncpy((abr[x]).original, app[x].nome, 50);
+		
+		if(tamanho==0){
+		    (abr[x]).nome[2] = (app[x]).nome[d[2]];     
+			(abr[x]).nome[3] = '\0';                                                                                 
+			printf("%s", abr[x].nome);
+			printf("\t");
+			w++;}else{		    
+			(abr[x]).nome[2] = (app[x]).nome[d[2]];     
+			(abr[x]).nome[3] = '\0';                                                                                 
+			printf("%s-%d", abr[x].nome, (app[x]).tamanho);
+			printf("\t");
+			w++;}
+			if(w==3){w=0;printf("\n");}
+				c=1;
+		}
+		
+	}
+	if(c==0){printf("nenhum aplicativo");}return c;
+}
+void inserir(App app[MAX], Abr abr[MAX], char nome[50], App next[MAX],char mensagem[2000], Lista *anterior,Lista *proxima){			
+		int x, y,c,z;			
+		for(z=0;z<strlen(nome);z++){
+		nome[z]=tolower(nome[z]);
+		}
+		for(x=0;x<MAX;x++){
+			for(y=proxima->il;y<=proxima->fl;y++){
+				if(strcmp(nome,next[y].nome)==0){		
+					strcpy(mensagem, "O aplicativo ja existe");
+					mensagem[sizeof("o aplicativo ja existe")]='\0';
+					return;
+				}else if(strcmp(abr[x].nome, nome)==0){
+					if(strcmp(abr[x].original, next[y].nome)==0){			
+					strcpy(mensagem, "O aplicativo ja existe");
+					mensagem[sizeof("o aplicativo ja existe")]='\0';
+					return;
+					}
+				}
+			}
+		}
+		
+		for(z=0;z<MAX;z++){
+			if(strcmp(abr[z].nome, nome)==0)
+			for(x=anterior->il;x<=anterior->fl;x++){
+				if(strcmp(app[x].nome, abr[z].original)==0){
+					for(y=(proxima->il);y<=(proxima->fl);y++){
+						if(proxima->il == -2 ){
+							proxima->il = 0;
+							y=0;
+						}
+						if(app[x].tamanho < next[y].tamanho || proxima->fl == -1){
+							if(proxima->il!=0){
+								proxima->il =(proxima->il)-1;
+								for(c=proxima->il;c<y;c++){
+									next[c]=next[c+1];
+								}
+								next[y]=app[x];
+								break;
+							}
+							if(proxima->fl!=MAX-1){
+								proxima->fl =(proxima->fl)+1;
+								for(c=proxima->fl;c>y;c--){
+									next[c]=next[c-1];
+								}
+								next[y]=app[x];
+								break;
+							}
+						}
+						if(app[x].tamanho>=next[proxima->fl].tamanho){
+							proxima->fl=(proxima->fl)+1;
+							next[proxima->fl]=app[x];
+							break;
+						
+						}
+					
+					}
+					strcpy(mensagem, "sucesso");
+					mensagem[sizeof("sucesso")]='\0';
+					return;
+				}
+			}
+		}
+		
+			for(x=anterior->il;x<=anterior->fl;x++){
+				if(strcmp(app[x].nome, nome)==0){
+					for(y=(proxima->il);y<=(proxima->fl);y++){
+						if(proxima->il == -2 ){
+							proxima->il = 0;
+							y=0;
+						}
+						if(app[x].tamanho < next[y].tamanho || proxima->fl == -1){
+							if(proxima->il!=0){
+								proxima->il =(proxima->il)-1;
+								for(c=proxima->il;c<y;c++){
+									next[c]=next[c+1];
+								}
+								next[y]=app[x];
+								break;
+							}
+							if(proxima->fl!=MAX-1){
+								proxima->fl =(proxima->fl)+1;
+								for(c=proxima->fl;c>y;c--){
+									next[c]=next[c-1];
+								}
+								next[y]=app[x];
+								break;
+							}
+						}
+						if(app[x].tamanho>=next[proxima->fl].tamanho){
+							proxima->fl=(proxima->fl)+1;
+							next[proxima->fl]=app[x];
+							break;
+						
+						}
+					}
+					strcpy(mensagem, "sucesso");
+					mensagem[sizeof("sucesso")]='\0';
+					return;
+				}
+			}
+			
+		strcpy(mensagem, "O aplicativo nao existe");
+		mensagem[sizeof("o aplicativo nao existe")]='\0';
+		return;
+		}
+int menu_listar(App StoreED[MAX], App app[MAX], App RunED[MAX], Abr abr[MAX], int x, char mensagem[2000], Lista *store,Lista *meus, Lista *rum){
+char aplicativo[50];
+int c,existir,d;
+system("cls");
+printf("%s\n", mensagem);
+if(x==1){
+printf("--------StoreED-------\n");
+printf("[3]MeusAppsED [4]AppRumED [5]Sair\n");
+printf("----------------------\n");
+existir = listar(StoreED, abr,0, store);
+printf("\n-----------------------\n");
+if(existir==1){printf("[0]instalar  [1]remover\n");}
+printf("\nEscolha uma opcao:");
+scanf("%d", &c);
+switch(c)
+{
+case 0:
+	if(existir==1){
+	printf("Qual aplicativo voce deseja instalar?");
+	scanf("%s", aplicativo);
+	inserir(StoreED, abr, aplicativo, app, mensagem, store, meus);
+	return 1;}
+	break;
+case 1:
+if(existir==1){
+	printf("Qual aplicativo voce deseja remover?");
+	scanf("%s", aplicativo);
+	d = remover(StoreED, abr, aplicativo, store);
+	if(d==0){strcpy(mensagem, "O aplicativo nao existe");
+		mensagem[sizeof("o aplicativo nao existe")]='\0';}
+	else if(d==1){strcpy(mensagem, "O aplicativo foi removido com sucesso");
+		mensagem[sizeof("o aplicativo doi removido com sucesso")]='\0';}
+	remover(app, abr,aplicativo,meus);
+	remover(RunED,abr,aplicativo,rum);
+	return 1;}
+	break;
+case 3:
+	mensagem[0] = '\0';
+	return 2;
+case 4:
+	mensagem[0] = '\0';
+return 3;
+case 5:
+	exit(0);
+default:
+	break;
+}
+}else if(x==2)
+{
+printf("------------MeusAppsED---------\n");
+printf("[2]StoreED [4]AppRumED [5]Sair\n");
+printf("-------------------------\n");
+existir = listar(app, abr,1, meus);
+printf("\n-------------------------");
+if(existir==1){printf("\n[0]iniciar [1]remover\n");}
+printf("\nEscolha uma opcao:");
+scanf("%d", &c);
+switch(c)
+{
+case 0:
+	if(existir==1){
+	printf("Qual aplicativo voce deseja iniciar?");
+	scanf("%s", aplicativo);
+	inserir(app, abr, aplicativo, RunED, mensagem, meus, rum);
+	return 2;}
+	break;
+case 1:
+	if(existir==1){
+	printf("Qual aplicativo voce deseja desinstalar?");
+	scanf("%s", aplicativo);
+	d = remover(app, abr, aplicativo,meus);
+		if(d==0){strcpy(mensagem, "O aplicativo nao existe");
+		mensagem[sizeof("o aplicativo nao existe")]='\0';}
+	else if(d==1){strcpy(mensagem, "O aplicativo foi removido com sucesso");
+		mensagem[sizeof("o aplicativo doi removido com sucesso")]='\0';}
+	remover(RunED,abr,aplicativo,rum);
+	return 2;}
+	break;
+case 2:
+	mensagem[0] = '\0';
+	return 1;
+case 4:
+	mensagem[0] = '\0';
+return 3;
+case 5:
+	exit(0);
+default:
+	break;
+}}else if(x==3)
+{
+printf("-----------AppRumED-----------\n");
+printf("[2]StoreED [3]MeusAppsED [5]Sair\n");
+printf("--------------------------\n");
+existir = listar(RunED, abr,0,rum);
+printf("\n--------------------------");
+if(existir==1){printf("\n[1]remover\n");}
+printf("\nEscolha uma opcao:");
+scanf("%d", &c);
+switch(c)
+{
+
+case 1:
+	if(existir==1){
+	printf("Qual aplicativo voce deseja parar?");
+	scanf("%s", aplicativo);
+	d = remover(RunED, abr, aplicativo,rum);
+		if(d==0){strcpy(mensagem, "O aplicativo nao existe");
+		mensagem[sizeof("o aplicativo nao existe")]='\0';}
+	else if(d==1){strcpy(mensagem, "O aplicativo foi removido com sucesso");
+		mensagem[sizeof("o aplicativo doi removido com sucesso")]='\0';}
+	return 3;}
+	break;
+
+case 2:
+	mensagem[0] = '\0';
+	return 1;
+case 3:
+	mensagem[0] = '\0';
+return 2;
+case 5:
+	exit(0);
+default:
+	break;
+}}
+strcpy(mensagem, "Por favor digite um valor valido");
+mensagem[sizeof("Por favor digite um valor valido")]='\0';
+return x;}
+void zerar(all *StoreED,all *app,all *RunED, Abr abr[MAX]){
+	int x;
+	for(x=0; x<MAX; x++){
+		StoreED->apps[x].prox = x+1;
+		app->apps[x].prox = x+1;
+		RunED->apps[x].prox = x+1;
+		if(x+1==MAX){
+		StoreED->apps[x].prox = -2;
+		app->apps[x].prox = -2;
+		RunED->apps[x].prox = -2;
+		}
+		StoreED->apps[x].app.nome[0] = '\0';
+		app->apps[x].app.nome[0] = '\0';
+		RunED->apps[x].app.nome[0] = '\0';
+		
+	}
+
+	
+}
+
+int main(){
+int x=0;
+char mensagem[2000];
+int disp[3];
+disp[0]=0;
+disp[1]=0;
+disp[2]=0;
+mensagem[0]='\0';
+all StoreED, MeusAppsED, AppRumED;
+Abr abr[MAX];
+zerar(&StoreED, &MeusAppsED,&AppRumED, abr);
+for(;x<MAX;x++){
+printf("%d", StoreED.apps[x].prox);}
+ler_banco(StoreED, disp);
+while(1){x = menu_listar(StoreED, MeusAppsED, AppRumED, abr,x, mensagem,&store,&meus,&rum);}
+return 0;	
+}
