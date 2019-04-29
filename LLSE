@@ -100,7 +100,7 @@ void ler_banco(all *app){
 		for(z=0;z<strlen(temp.nome);z++){temp.nome[z]=tolower(temp.nome[z]);}
 		if(app->IA !=-2){ 
 		for(y=app->IA;y!=-2;y=app->apps[y].prox){
-			if(temp.tamanho >= app->apps[y].app.tamanho || app->apps[y].app.tamanho == -2)
+			if(temp.tamanho >= app->apps[y].app.tamanho || app->apps[y].prox == -2)
 			{ 
 				ins(app,temp,count);
 				break;
@@ -151,13 +151,13 @@ int listar(all *app,  int tamanho){
 	if(c==0){printf("nenhum aplicativo");}return c;
 }
 void inserir(all *app, char nome[50], all *next,char mensagem[2000]){			
-		int x, y,c,z;
+		int  y,z;
 		int count=0;			
 		for(z=0;z<strlen(nome);z++){
 		nome[z]=tolower(nome[z]);
 		}
 
-		for(y=next->IA;next->apps[y].prox!=-2;next->apps[y].prox){
+		for(y=next->IA;next->apps[y].prox!=-2;y=next->apps[y].prox){
 			if(strcmp(nome,next->apps[y].app.nome)==0 || strcmp(next->apps[y].app.abr, nome)==0){		
 				strcpy(mensagem, "O aplicativo ja existe");
 				mensagem[sizeof("o aplicativo ja existe")]='\0';
@@ -166,7 +166,7 @@ void inserir(all *app, char nome[50], all *next,char mensagem[2000]){
 			}
 		
 		
-		for(z=app->IA;app->apps[z].prox=-2;z=app->apps[z].prox){
+		for(z=next->IA;next->apps[z].prox!=-2;z=next->apps[z].prox){
 			if(strcmp(app->apps[z].app.abr, nome)==0 || strcmp(app->apps[z].app.nome, nome)==0){
 				if(next->IA !=2){	
 					for(y=next->IA;next->apps[y].prox!=-2;y=app->apps[y].prox){
@@ -197,7 +197,7 @@ if(x==1){
 printf("--------StoreED-------\n");
 printf("[3]MeusAppsED [4]AppRumED [5]Sair\n");
 printf("----------------------\n");
-existir = listar(&StoreED,0);
+existir = listar(StoreED,0);
 printf("\n-----------------------\n");
 if(existir==1){printf("[0]instalar  [1]remover\n");}
 printf("\nEscolha uma opcao:");
@@ -347,8 +347,6 @@ char mensagem[2000];
 mensagem[0]='\0';
 all StoreED, MeusAppsED, AppRumED;
 zerar(&StoreED, &MeusAppsED,&AppRumED);
-for(;x<MAX;x++){
-printf("%d", StoreED.apps[x].prox);}
 ler_banco(&StoreED);
 while(1){x = menu_listar(&StoreED, &MeusAppsED, &AppRumED,x, mensagem);}
 return 0;	
