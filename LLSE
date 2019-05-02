@@ -23,25 +23,34 @@ typedef struct{
 void ins(all *app,aplicativo proximo,int x){
 	int temp;
 	int i = app->IA;
+	int y;
 	int count = 0;
+	printf("no ins: %d\n", x);
 	temp = app->disp;
 	app->disp = app->apps[app->disp].prox;
 	app->apps[temp].app = proximo;
-	if(app->IA!=-2){
+	if(app->IA==-2){
 		app->apps[temp].prox =-2;
 		app->IA=temp;
-		
 	}else{
-		while(count<x){
+		while(count<x && app->apps[i].prox!=-2){
 			count++;
 			i=app->apps[i].prox;
 		}
-		if(i == app->IA){	
+		printf("no ins: %d\n", x);
+		if(count<x){			
+			app->apps[temp].prox = -2;
+			app->apps[i].prox = temp;
+			printf("001\n");
+			}else if(i == app->IA){	
+			printf("002\n");
 			app->apps[temp].prox = i;
 		   	app->IA = temp;
-		}else{	
-			app->apps[temp].prox = app->apps[i].prox;
-			app->apps[i].prox = temp;
+		}else{
+			for(y=app->IA;app->apps[y].prox!=i;y=app->apps[y].prox){}
+			printf("003\n");	
+			app->apps[temp].prox = i;
+			app->apps[y].prox = temp;
 		}
 	}
 }
@@ -89,7 +98,8 @@ void ler_banco(all *app){
 	aplicativo temp;
 	FILE *dados;
 	char banco[30];
-	do{do{do{printf("insira o nome do banco de dados:");
+	do{do{do{y=0;
+	printf("insira o nome do banco de dados:");
 	scanf("%s", banco);
 	system("cls");
 	dados = fopen(banco, "rb");
@@ -97,24 +107,29 @@ void ler_banco(all *app){
 	for(x=0;x<MAX;x++){
 		count=0;
 		fread(&temp, sizeof(aplicativo),1, dados);
+		if(temp.tamanho < 0){printf("O arquivo esta corrompido com aplicativos de tamanho impossiveis\n por favor inserir novo arquivo\n"); y=1;break;}
 		for(z=0;z<strlen(temp.nome);z++){temp.nome[z]=tolower(temp.nome[z]);}
 		if(app->IA !=-2){ 
-		for(y=app->IA;y!=-2;y=app->apps[y].prox){
-			if(temp.tamanho >= app->apps[y].app.tamanho || app->apps[y].prox == -2)
-			{ 
+		for(y=app->IA;;y=app->apps[y].prox){
+			if(temp.tamanho<app->apps[y].app.tamanho)
+			{ 	
+				printf("1\n");
+				ins(app,temp,count);
+				break;
+			}else if(app->apps[y].prox == -2){
+				count++;  	
+				printf("2\n");			
 				ins(app,temp,count);
 				break;
 			}count++;
 		}}else{
+			printf("3\n");
 			ins(app, temp,0);
 		}
 	}
 	fread(&temp, sizeof(aplicativo), 1,dados);
 	if(!feof(dados)){printf("ocorreu um erro na leitura\n");}
 	}while(!feof(dados));
-	y=0;
-	for(x=0;x<MAX;x++){
-	if(app->apps[x].app.tamanho < 0){printf("O arquivo esta conrrompido com aplicativos de tamanho impossiveis\n por favor inserir novo arquivo\n"); y=1;}}
 	}while(y==1);
 	fclose(dados);
 }
@@ -327,11 +342,6 @@ void zerar(all *StoreED,all *app,all *RunED){
 		StoreED->apps[x].prox = x+1;
 		app->apps[x].prox = x+1;
 		RunED->apps[x].prox = x+1;
-		if(x+1==MAX){
-		StoreED->apps[x].prox = -2;
-		app->apps[x].prox = -2;
-		RunED->apps[x].prox = -2;
-		}
 		StoreED->apps[x].app.nome[0] = '\0';
 		app->apps[x].app.nome[0] = '\0';
 		RunED->apps[x].app.nome[0] = '\0';
@@ -342,12 +352,16 @@ void zerar(all *StoreED,all *app,all *RunED){
 }
 
 int main(){
-int x=0;
+int x=1;
 char mensagem[2000];
 mensagem[0]='\0';
 all StoreED, MeusAppsED, AppRumED;
 zerar(&StoreED, &MeusAppsED,&AppRumED);
 ler_banco(&StoreED);
-while(1){x = menu_listar(&StoreED, &MeusAppsED, &AppRumED,x, mensagem);}
+printf("%d",StoreED.IA);
+for(x=StoreED.IA;x!=2;x=StoreED.apps[x].prox){
+printf("%d\n", StoreED.apps[x].app.tamanho);
+}/*
+while(1){x = menu_listar(&StoreED, &MeusAppsED, &AppRumED,x, mensagem);}*/
 return 0;	
 }
